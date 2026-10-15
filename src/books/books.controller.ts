@@ -1,54 +1,35 @@
-import { Controller, Get, Post, Delete, Put, Patch, Param, Body, } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { BooksService } from './books.service.js';
 import { CreateBookDto } from './dto/create-book.dto.js';
 
 @Controller('books')
 export class BooksController {
-    constructor(private readonly booksService: BooksService) { }
+  constructor(private readonly booksService: BooksService) {}
 
+  @Get()
+  getBooks() {
+    return this.booksService.findAll();
+  }
 
-    // GET /books
-    @Get()
-    getBooks() {
-        return this.booksService.findAll();
-    }
+  @Post()
+  createBook(@Body() createBookDto: CreateBookDto) {
+    return this.booksService.create(createBookDto);
+  }
 
-    // POST /books
-    @Post()
-    createBook(@Body() createBookDto: CreateBookDto) {
-        return this.booksService.create(createBookDto);
-    }
+  // GET /books/:id
+  @Get(':id')
+  getBookById(@Param('id', ParseIntPipe) id: number) {
+    // Panggil service langsung (jangaan dibungkus { data: ... } lagi)
+    return this.booksService.findOne(id);
+  }
 
-    // DELETE /books
-    @Delete()
-    deleteBook() {
-        return {
-            message: 'Buku berhasil dihapus'
-        };
-    }
+  @Put(':id')
+  updateBookById(@Param('id', ParseIntPipe) id: number) {
+    return `Buku dengan ID ${id} berhasil diperbarui`;
+  }
 
-
-    // GET /books/:id
-    @Get(':id')
-    getBookById(@Param('id') id: string) {
-        return {
-            data: `Buku dengan ID ${id}`
-        };
-    }
-
-    // PUT /books/:id
-    @Put(':id')
-    updateBookById(@Param('id') id: string) {
-        return {
-            data: `Buku dengan ID ${id} berhasil diperbarui`
-        };
-    }
-
-    // DELETE /books/:id
-    @Delete(':id')
-    deleteBookById(@Param('id') id: string) {
-        return {
-            data: `Buku dengan ID ${id} berhasil dihapus`
-        };
-    }
+  @Delete(':id')
+  deleteBookById(@Param('id', ParseIntPipe) id: number) {
+    return `Buku dengan ID ${id} berhasil dihapus`;
+  }
 }
