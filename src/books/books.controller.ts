@@ -19,7 +19,6 @@ export class BooksController {
   // GET /books/:id
   @Get(':id')
   getBookById(@Param('id', ParseIntPipe) id: number) {
-    // Panggil service langsung (jangaan dibungkus { data: ... } lagi)
     return this.booksService.findOne(id);
   }
 
